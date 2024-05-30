@@ -7,43 +7,24 @@
 
 import SwiftUI
 
-struct ListView: View {
+struct ListScreenView: View {
     @EnvironmentObject var globalState: GlobalState
+    
     var body: some View {
         List {
             ForEach(sortedEntries, id: \.key) { date, tiles in
                 Section(header: Text(date)){
                     ForEach(tiles, id: \.self){ tile in
-                        HStack {
-                            Image(systemName: tile.image )
-                            VStack {
-                                Text(" \(tile.category)")
-                                    .font(.headline)
-                                Text(" \(tile.comment)")
-                                    .font(.subheadline)
-                                    .foregroundColor(.secondary)
-                            }
-                            Spacer()
-                            Text(String(tile.type == .income ? "\(tile.amount)" : "-\(tile.amount)"))
-                                .font(.headline)
-                                .foregroundColor(tile.type == .income ? Color.green : Color.red)
-                            Spacer()
-                            
-                        }
+                        ListTileView(tile: tile) // Corrected to ListTileView
                     }
                 }
             }
-            
         }
     }
     
-    
-    private var sortedEntries: [(key: String, value: [ListTile])] {
-        globalState.listView.sorted {$0.key < $1.key}
+    private var sortedEntries: [(key: String, value: [ListTileModel])] {
+        return globalState.listView.sorted { $0.key > $1.key }
     }
-}
 
-#Preview {
-    ListView()
-        .environmentObject(GlobalState())
+
 }

@@ -8,21 +8,20 @@
 import SwiftUI
 
 struct TextFieldCustomView: View {
-    @Binding var amount: String
+    @Binding var text: String
     var placeholder: String
     var body: some View {
-        TextField(placeholder, text: $amount)
+        TextField(placeholder, text: $text)
             .padding()
-            .background(Color.gray)
-            
-            
+            .background(Color.textField)
+            .foregroundColor(Color.white)
     }
 }
 
 struct ContentView_Previews: PreviewProvider {
-    @State static var amount: String = ""
+    @State static var text: String = ""
     
     static var previews: some View {
-        TextFieldCustomView(amount: $amount, placeholder: "Enter amount")
+        TextFieldCustomView(text: $text, placeholder: "Enter amount")
     }
 }

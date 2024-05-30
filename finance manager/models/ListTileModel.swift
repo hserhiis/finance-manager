@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct ListTile: Identifiable, Hashable {
+struct ListTileModel: Identifiable, Hashable {
     var id = UUID()
     var amount: Double
     var comment: String

@@ -7,25 +7,22 @@
 
 import SwiftUI
 
-struct CurrencyList: View {
+struct CurrencyListView: View {
     @EnvironmentObject var state: GlobalState
-    var array: [String: String]
     @State private var currencyString: String = ""
+    var array: [String: String]
+    
     
     var body: some View {
         ForEach(array.map { $0 }, id: \.key) { currency in
-            HStack {
-                Text(currency.value)
-                Spacer()
-                Text(currency.key)
-            }
-            .padding(.vertical, 8)
-            .background(currencyString == currency.key ? Color.gray.opacity(0.7) : Color.clear)
+            CurrencyListTileView(key: currency.key, value: currency.value)
+                .background(currencyString == currency.key ? Color.gray.opacity(0.7) : Color.clear)
             .onTapGesture {
                 state.selectedCurrency = currency.key
                 print(state.selectedCurrency)
                 currencyString = currency.key
             }
+                
         }
     }
 }

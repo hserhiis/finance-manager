@@ -8,11 +8,19 @@
 import SwiftUI
 
 struct ButtonDrawer: View {
+    var state: GlobalState
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        HStack{
+            
+            // Toggle button for the drawer
+            Button(action: {
+                state.isDrawerOpen.toggle()
+                print(state.isDrawerOpen)
+            }) {
+                Image(systemName: "line.3.horizontal")
+                    .padding()
+            }
+            Spacer()
+        }
     }
-}
-
-#Preview {
-    ButtonDrawer()
 }

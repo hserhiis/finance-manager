@@ -8,9 +8,9 @@
 import SwiftUI
 
 struct BalanceWidgetView: View {
-    @EnvironmentObject var globalState: GlobalState
+    @EnvironmentObject var state: GlobalState
     var body: some View {
-        Text("\(globalState.balanceTotal, specifier: doubleSpecifier) CAD")
+        Text("\(getDeletedComma(value: state.getBalanceTotal().abbreviated)) \(state.selectedCurrency)")
             .foregroundStyle(Color.blue)
     }
 }

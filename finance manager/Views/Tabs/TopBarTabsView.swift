@@ -8,11 +8,32 @@
 import SwiftUI
 
 struct TopBarTabsView: View {
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+    @Binding var selectedTab: TabType
+    @EnvironmentObject var state: GlobalState
+    
+    func getTabBarAmount(for tab: TabType) -> Double {
+        switch tab {
+        case .income:
+            return state.incomeTotal
+        case .expenses:
+            return state.expensesTotal
+        case .balance:
+            return state.getBalanceTotal()
+        }
     }
-}
-
-#Preview {
-    TopBarTabsView()
+    
+    var body: some View {
+        VStack {
+            HStack(spacing: 10) {
+                ForEach([TabType.income, TabType.expenses], id: \.self) { tab in
+                    TopBarTabView(tab: tab, isSelected: tab == selectedTab, amount: getTabBarAmount(for: tab))
+                        .onTapGesture {
+                            selectedTab = tab
+                        }
+                }
+            }
+            .padding(.horizontal)
+        }
+        
+    }
 }

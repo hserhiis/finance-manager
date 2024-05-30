@@ -8,24 +8,23 @@
 import SwiftUI
 
 struct MainAppView: View {
-    @StateObject private var globalState: GlobalState = GlobalState()
+    @EnvironmentObject private var globalState: GlobalState
     private let width = UIScreen.main.bounds.width - 100
     
     var body: some View {
         NavigationView {
                 ZStack(alignment: .leading) {
                     // Drawer content
-                    DrawerContent()
+                    DrawerWidgetView()
                         .frame(width: width)
                         .offset(x: globalState.isDrawerOpen ? 0 : -width)
                         .animation(.default)
                         .zIndex(99)
-                    
                     // Content behind the drawer
                     VStack {
-                        
-                        ButtonDrawer(state: globalState)
-                        
+                        HStack {
+                            ButtonDrawer(state: globalState)
+                        }
                             TabView(selection: $globalState.currentScreen) {
                                 HomeScreenView()
                                     .tabItem {
@@ -44,8 +43,6 @@ struct MainAppView: View {
                                     .tag(ScreenType.goal.id)
                             }
                         }
-                    
-                    
                     // Transparent overlay to capture taps outside the drawer
                     if globalState.isDrawerOpen {
                         Color.black.opacity(0.3)
@@ -56,8 +53,9 @@ struct MainAppView: View {
                             .zIndex(98) // Ensure it's behind the drawer
                     }
                 }
+                
             }
-        .environmentObject(GlobalState())
+        
     }
 }
 

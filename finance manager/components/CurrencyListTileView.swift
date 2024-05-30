@@ -8,11 +8,17 @@
 import SwiftUI
 
 struct CurrencyListTileView: View {
+    var key: String
+    var value: String
+    
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        HStack{
+            Text(value)
+            Spacer()
+            Text(key)
+        }
+        .padding(.vertical, 8)
+        .padding(.horizontal, 8)
     }
-}
-
-#Preview {
-    CurrencyListTileView()
 }

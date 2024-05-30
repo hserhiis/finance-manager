@@ -13,12 +13,10 @@ struct ContentView: View {
     var body: some View {
         if globalState.isLoggedIn {
             MainAppView()
+        } else if globalState.isSignedUp {
+            CurrencyScreenView()
         } else {
             SignInScreenView()
         }
     }
-}
-
-#Preview {
-    ContentView()
 }

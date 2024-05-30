@@ -6,65 +6,59 @@
 //
 
 import SwiftUI
+import FirebaseAuth
 
-struct DrawerContent: View {
+struct DrawerWidgetView: View {
     @EnvironmentObject var globalState: GlobalState
-    @State var isSettingsScreenOpen: Bool = false
-    @State var isSignInScreenOpen: Bool = false
+    @State private var isSettingsScreenOpen: Bool = false
+    @State private var isSignInScreenOpen: Bool = false
 
     var body: some View {
         VStack(alignment: .leading) {
             Spacer()
             // Drawer content buttons
-            Button(action: {
+            NavigationButton(title: "Home", action: {
                 globalState.currentScreen = ScreenType.home.id
                 globalState.isDrawerOpen = false
-            }, label: {
-                Text("Home")
             })
             
-            Button(action: {
+            NavigationButton(title: "List", action: {
                 globalState.currentScreen = ScreenType.list.id
                 globalState.isDrawerOpen = false
-            }, label: {
-                Text("List")
             })
             
-            Button(action: {
+            NavigationButton(title: "Goal", action: {
                 globalState.currentScreen = ScreenType.goal.id
                 globalState.isDrawerOpen = false
-            }, label: {
-                Text("Goal")
             })
             
-            Button(action: {
+            NavigationButton(title: "Settings", action: {
                 globalState.isDrawerOpen = false
                 isSettingsScreenOpen = true
-            }, label: {
-                Text("Settings")
             })
             .background(
-                NavigationLink("", isActive: $isSettingsScreenOpen, destination: {
+                NavigationLink("", isActive: $isSettingsScreenOpen) {
                     SettingsScreenView()
-                })
+                }
             )
-            Button(action: {
+            
+            NavigationButton(title: "Sign out", action: {
                 globalState.isDrawerOpen = false
-                isSignInScreenOpen = true
-            }, label: {
-                Text("Sign out")
+                Task {
+                    await globalState.updateUserData()
+                }
+                
+                signOut()
             })
             .background(
                 NavigationLink("", isActive: $isSignInScreenOpen) {
                     SignInScreenView()
-                        .navigationBarBackButtonHidden()
+                        .navigationBarBackButtonHidden(true)
                         .navigationBarHidden(true)
                 }
             )
             
-            
             Spacer()
-            
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -75,5 +69,28 @@ struct DrawerContent: View {
             }
         }
     }
+    
+    private func signOut() {
+        let firebaseAuth = Auth.auth()
+        do {
+            try firebaseAuth.signOut()
+            isSignInScreenOpen = true
+        } catch let signOutError as NSError {
+            print("Error signing out: %@", signOutError)
+        }
+    }
 }
 
+struct NavigationButton: View {
+    let title: String
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Text(title)
+                .padding()
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+}

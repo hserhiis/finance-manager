@@ -7,12 +7,9 @@
 
 import SwiftUI
 
-struct GoalView: View {
+struct GoalScreenView: View {
     var body: some View {
+        
         Text("GoalScreen")
     }
-}
-
-#Preview {
-    GoalView()
 }

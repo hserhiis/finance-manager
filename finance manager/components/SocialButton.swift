@@ -8,11 +8,21 @@
 import SwiftUI
 
 struct SocialButton: View {
+    var icon: ImageResource
+    var text: String
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        HStack(alignment: .center) {
+            Image(icon)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 30, height: 30)
+                .padding(.trailing, 8)
+            Text(text)
+                .font(.title2)
+        }
+        .padding()
+        .frame(maxWidth: .infinity)
+        .background(Color.textField)
+        .cornerRadius(3.0)
     }
-}
-
-#Preview {
-    SocialButton()
 }

@@ -1,35 +1,32 @@
-//
-//  finance_managerApp.swift
-//  finance manager
-//
-//  Created by Serhii Shapovalov on 2024-05-09.
-//
-
 import SwiftUI
+import FirebaseCore
+import FirebaseAuth
+import FirebaseFirestore
 
 @main
 struct finance_managerApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    @StateObject private var globalState: GlobalState = GlobalState()
+
+    init() {
+        // Ensure Firebase is configured at the earliest point possible
+        FirebaseApp.configure()
+    }
+
     var body: some Scene {
         WindowGroup {
-            TabView{
-                
-                ContentView()
-                    .tabItem {
-                        Label("Home", systemImage: "house.fill")
-                    }
-                ListView()
-                    .tabItem {
-                        Label("List", systemImage: "list.bullet.clipboard.fill")
-                    }
-                    
-                GoalView()
-                    .tabItem {
-                        Label("Goal", systemImage: "gear")
-                    }
-            }
-            .environmentObject(GlobalState())
+            ContentView()
+                .environmentObject(globalState)
         }
-        
     }
-        
+}
+
+class AppDelegate: NSObject, UIApplicationDelegate {
+    var window: UIWindow?
+
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        // FirebaseApp.configure() is called in the @main struct's initializer
+        // Adjust Firestore settings
+        return true
+    }
 }
