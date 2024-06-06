@@ -12,83 +12,81 @@ extension Double {
         let numberFormatter = NumberFormatter()
         numberFormatter.numberStyle = .currency
         numberFormatter.maximumFractionDigits = 2
-        
-        if self >= 1000 {
-            let formattedString = numberFormatter.string(from: NSNumber(value: self))!
-            return formattedString
+        return numberFormatter.string(from: NSNumber(value: self))!
+    }
+}
+
+extension Double {
+    var short: String {
+        let numberFormatter = NumberFormatter()
+        numberFormatter.maximumFractionDigits = 1
+        numberFormatter.minimumFractionDigits = 0
+        numberFormatter.roundingMode = .down
+
+        let thousand = 1000.0
+        let million = thousand * thousand
+
+        if self >= million {
+            return numberFormatter.string(from: NSNumber(value: self / million))! + "M"
+        } else if self >= thousand {
+            return numberFormatter.string(from: NSNumber(value: self / thousand))! + "k"
         } else {
             return numberFormatter.string(from: NSNumber(value: self))!
         }
     }
 }
 
-func getDeletedComma(value: String) -> String {
-    let valueWithoutComma =  value.replacingOccurrences(of: ",", with: " ")
-    return valueWithoutComma.replacingOccurrences(of: ".", with: " ")
+func removeCommasAndDots(from value: String) -> String {
+    return value.replacingOccurrences(of: ",", with: " ").replacingOccurrences(of: ".", with: " ")
 }
-
 
 let doubleSpecifier: String = "%.2f"
 
-// functionality for format date for different needs
-func formattedDateOnly(from date: Date, dateType: DateType, dayType: DayType?) -> String {
-    var dateString: String {
+func formattedDate(from date: Date, dateType: DateType, dayType: DayType? = nil) -> String {
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = {
         switch dateType {
         case .monthDay: return "dd.MM"
         case .yearMonthDay: return "dd.MM.yyyy"
         }
-    }
-    
-    let dateFormatter = DateFormatter()
-    dateFormatter.dateFormat = dateString
-    
-    if let dayType = dayType {
-        if dayType == .today {
-            return dateFormatter.string(from: date)
-        } else if dayType == .yesterday {
-            // Get the calendar and calculate yesterday's date
-            let calendar = Calendar.current
-            let modifiedDate = calendar.date(byAdding: .day, value: -1, to: date)!
-            return dateFormatter.string(from: modifiedDate)
-        } else {
-            let calendar = Calendar.current
-            let modifiedDate = calendar.date(byAdding: .day, value: -2, to: date)!
-            return dateFormatter.string(from: modifiedDate)
-        }
-    } else {
-        // If dayType is nil, return the date without modification
+    }()
+
+    guard let dayType = dayType else {
         return dateFormatter.string(from: date)
     }
-}
 
-func getIsValidEmail(value: String) -> Bool {
-    let emailRegex = try! NSRegularExpression(pattern: "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")
-    return emailRegex.firstMatch(in: value, options: [], range: NSRange(location: 0, length: value.utf16.count)) != nil
-}
+    let calendar = Calendar.current
+    let modifiedDate: Date
 
-
-func getIsValidPassword(value: String) -> Bool {
-    if value.count >= 8 {
-        return true
-    } else {
-        return false
+    switch dayType {
+    case .today:
+        modifiedDate = date
+    case .yesterday:
+        modifiedDate = calendar.date(byAdding: .day, value: -1, to: date)!
+    case .beforeYesterday:
+        modifiedDate = calendar.date(byAdding: .day, value: -2, to: date)!
     }
+    return dateFormatter.string(from: modifiedDate)
+}
+
+func getIsValidEmail(_ value: String) -> Bool {
+    let emailRegex = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$"
+    return NSPredicate(format: "SELF MATCHES %@", emailRegex).evaluate(with: value)
+}
+
+func getIsValidPassword(_ value: String) -> Bool {
+    return value.count >= 8
 }
 
 func getIsValidConfirmedPassword(password: String, confirmedPassword: String) -> Bool {
-    if password == confirmedPassword {
-        return true
-    } else {
-        return false
-    }
+    return password == confirmedPassword
 }
 
 let currentDate = Date()
 
-// formatted date for DateWidgetView
-var todayDate: String = formattedDateOnly(from: Date.now, dateType: .monthDay, dayType: .today)
-var yesterdayDate: String = formattedDateOnly(from: Date.now, dateType: .monthDay, dayType: .yesterday)
-var beforeYesterdayDate: String = formattedDateOnly(from: Date.now, dateType: .monthDay, dayType: .beforeYesterday)
+var todayDate: String = formattedDate(from: Date.now, dateType: .monthDay, dayType: .today)
+var yesterdayDate: String = formattedDate(from: Date.now, dateType: .monthDay, dayType: .yesterday)
+var beforeYesterdayDate: String = formattedDate(from: Date.now, dateType: .monthDay, dayType: .beforeYesterday)
 
 var todayString: String = DayType.today.day
 var yesterdayString: String = DayType.yesterday.day

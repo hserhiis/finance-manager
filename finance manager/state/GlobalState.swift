@@ -5,6 +5,9 @@ import FirebaseFirestore
 class GlobalState: ObservableObject {
     // MARK: - Published Properties
     
+    
+    
+    @Published var selectedTab: TabType = .income
     @Published var selectedCurrency: String = ""
     @Published var isSearchActive: Bool = false
     @Published var filteredArray: [String: String] = [:]
@@ -18,6 +21,21 @@ class GlobalState: ObservableObject {
     @Published var listView: [String: [ListTileModel]] = [:]
     @Published private var balanceTotal: Double = 0.0
     @Published var userId: String?
+    @Published var noteList: [NoteModal] = []
+    
+    func addToNotesList(tile: NoteModal) {
+        noteList.append(tile)
+    }
+    
+    func getPercentIncomeNote() -> Double {
+        let total = incomeTotal + expensesTotal + balanceTotal
+        return incomeTotal / total
+    }
+    
+    func getPercentExpensesNote() -> Double {
+        let total = incomeTotal + expensesTotal + balanceTotal
+        return expensesTotal / total
+    }
     
     // MARK: - Firestore
     
@@ -91,8 +109,9 @@ class GlobalState: ObservableObject {
         async let incomeTask: Void = fetchIncome(for: userId)
         async let expensesTask: Void = fetchExpenses(for: userId)
         async let listTask: Void = fetchList(for: userId)
+        async let notesTask: Void = fetchNotes(for: userId)
         
-        await (balanceTask, incomeTask, expensesTask, listTask)
+       await (balanceTask, incomeTask, expensesTask, listTask, notesTask)
     }
     
     func updateUserData() async {
@@ -101,12 +120,13 @@ class GlobalState: ObservableObject {
             return
         }
         
-        async let updateBalanceTask: Void = updateBalance(for: userId)
-        async let updateIncomeTask: Void = updateIncome(for: userId)
-        async let updateExpensesTask: Void = updateExpenses(for: userId)
-        async let updateListTask: Void = updateList(for: userId)
+        async let balanceTask: Void = updateBalance(for: userId)
+        async let incomeTask: Void = updateIncome(for: userId)
+        async let expensesTask: Void = updateExpenses(for: userId)
+        async let listTask: Void = updateList(for: userId)
+        async let notesTask: Void = updateNotes(for: userId)
         
-        await (updateBalanceTask, updateIncomeTask, updateExpensesTask, updateListTask)
+       await (balanceTask, incomeTask, expensesTask, listTask, notesTask)
     }
     
     // MARK: - Firestore Functions
@@ -157,16 +177,12 @@ class GlobalState: ObservableObject {
         let listCollection = db.collection("Users").document(userId).collection("List")
         do {
             let snapshot = try await listCollection.getDocuments()
-            print("Total documents fetched: \(snapshot.documents.count)") // Debugging output
             for document in snapshot.documents {
                 let dateID = document.documentID
-                print("Fetching list for date: \(dateID)") // Debugging output
                 let subCollection = listCollection.document(dateID).collection("listTile")
                 let subSnapshot = try await subCollection.getDocuments()
-                print("Total sub-documents fetched for date \(dateID): \(subSnapshot.documents.count)") // Debugging output
                 for subDocument in subSnapshot.documents {
                     let listTileData = subDocument.data()
-                    print("Fetched listTile data: \(listTileData)") // Debugging output
                     let amountValue = listTileData["amount"] as? String ?? ""
                     let amountDouble = Double(amountValue) ?? 0.0
                     let comment = listTileData["comment"] as? String ?? ""
@@ -175,7 +191,6 @@ class GlobalState: ObservableObject {
                     let typeString: String = listTileData["type"] as? String ?? ""
                     let type: AmountType = typeString.lowercased() == "expense" ? .expense : .income
                     let newTile = ListTileModel(amount: amountDouble, comment: comment, category: category, image: imageName, type: type)
-                    print("Adding new tile: \(newTile)") // Debugging output
                     addListTile(for: dateID, tile: newTile)
                 }
             }
@@ -183,6 +198,34 @@ class GlobalState: ObservableObject {
             print("Error fetching list: \(error.localizedDescription)")
         }
     }
+    
+    // Inside the GlobalState class
+
+    private func fetchNotes(for userId: String) async {
+        let notesCollection = db.collection("Users").document(userId).collection("Notes")
+        
+        do {
+            let snapshot = try await notesCollection.getDocuments()
+            
+            for document in snapshot.documents {
+                let noteData = document.data()
+                
+                let text = noteData["text"] as? String ?? ""
+                let category = noteData["category"] as? String ?? ""
+                let isChecked = noteData["isChecked"] as? Bool ?? false
+                
+                let newNote = NoteModal(text: text, category: category, isChecked: isChecked)
+                
+                // Add the new note to the noteList
+                DispatchQueue.main.async {
+                    self.addToNotesList(tile: newNote)
+                }
+            }
+        } catch {
+            print("Error fetching notes: \(error.localizedDescription)")
+        }
+    }
+
     
     private func updateBalance(for userId: String) async {
         let balanceDoc = db.collection("Users").document(userId).collection("Balance").document("balanceDoc")
@@ -194,7 +237,7 @@ class GlobalState: ObservableObject {
             print("Error updating balance: \(error.localizedDescription)")
         }
     }
-
+    
     private func updateIncome(for userId: String) async {
         let incomeDoc = db.collection("Users").document(userId).collection("Income").document("incomeDoc")
         do {
@@ -205,7 +248,7 @@ class GlobalState: ObservableObject {
             print("Error updating income: \(error.localizedDescription)")
         }
     }
-
+    
     private func updateExpenses(for userId: String) async {
         let expensesDoc = db.collection("Users").document(userId).collection("Expenses").document("expensesDoc")
         do {
@@ -216,16 +259,16 @@ class GlobalState: ObservableObject {
             print("Error updating expenses: \(error.localizedDescription)")
         }
     }
-
+    
     private func updateList(for userId: String) async {
         let listCollection = db.collection("Users").document(userId).collection("List")
-
+        
         do {
             // Loop through each dateID and its corresponding listTiles
             for (dateID, listTiles) in listView {
                 // Reference to the date document
                 let dateDocumentRef = listCollection.document(dateID)
-
+                
                 // Clear existing list tiles
                 let existingListTiles = try await dateDocumentRef.collection("listTile").getDocuments()
                 for document in existingListTiles.documents {
@@ -256,5 +299,37 @@ class GlobalState: ObservableObject {
             print("Error updating list: \(error.localizedDescription)")
         }
     }
+    
+    // Inside the GlobalState class
+
+    private func updateNotes(for userId: String) async {
+        let notesCollection = db.collection("Users").document(userId).collection("Notes")
+        
+        do {
+            // Clear existing notes
+            let existingNotes = try await notesCollection.getDocuments()
+            for document in existingNotes.documents {
+                try await document.reference.delete()
+            }
+            
+            // Loop through each note and update it in Firestore
+            for note in noteList {
+                let noteData: [String: Any] = [
+                    "text": note.text,
+                    "category": note.category,
+                    "isChecked": note.isChecked
+                ]
+                
+                // Convert UUID to string for use as document ID
+                let noteDocumentRef = notesCollection.document()
+                
+                // Add new document
+                try await noteDocumentRef.setData(noteData)
+            }
+        } catch {
+            print("Error updating notes: \(error.localizedDescription)")
+        }
+    }
+
 }
 

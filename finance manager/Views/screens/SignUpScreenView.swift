@@ -47,8 +47,8 @@ struct SignUpScreenView: View {
                     Spacer()
                     PrimaryButton(text: "Sign up")
                         .onTapGesture {
-                            isValidEmail = getIsValidEmail(value: email)
-                            isValidPassword = getIsValidPassword(value: password)
+                            isValidEmail = getIsValidEmail(email)
+                            isValidPassword = getIsValidPassword(password)
                             isValidConfirmedPassword = getIsValidConfirmedPassword(password: password, confirmedPassword: passwordConfirm)
                             if isValidEmail && isValidPassword && isValidConfirmedPassword {
                                 Auth.auth().createUser(withEmail: email, password: password) { authResult, error in
@@ -74,10 +74,6 @@ struct SignUpScreenView: View {
                         }
 
                     Spacer()
-                    Text("---- OR ----")
-                    Spacer()
-                    SocialButton(icon: .google, text: "Sign up with google")
-                    SocialButton(icon: .apple, text: "Sign up with apple")
                     HStack {
                         Text("Already have an account?")
                         NavigationLink(
@@ -93,6 +89,7 @@ struct SignUpScreenView: View {
             .padding(.top, 180)
             .padding(.bottom, 80)
         }
+        
     }
 }
 

@@ -20,6 +20,7 @@ struct ListScreenView: View {
                 }
             }
         }
+        
     }
     
     private var sortedEntries: [(key: String, value: [ListTileModel])] {

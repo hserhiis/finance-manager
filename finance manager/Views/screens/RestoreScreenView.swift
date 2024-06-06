@@ -20,7 +20,7 @@ struct RestoreScreenView: View {
         .zIndex(99)
         .padding(.top, height)
         .onTapGesture {
-            isEmailCorrect = getIsValidEmail(value: email)
+            isEmailCorrect = getIsValidEmail(email)
             if isEmailCorrect {
                 Auth.auth().sendPasswordReset(withEmail: email) { error in
                     if let err = error {
@@ -71,6 +71,7 @@ struct RestoreScreenView: View {
                 }
             }
         }
+        
     }
 }
 

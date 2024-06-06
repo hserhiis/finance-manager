@@ -24,14 +24,10 @@ struct ListTileView: View {
                 }
             }
             Spacer()
-            Text(String(tile.type == .income ? "\(getDeletedComma(value: tile.amount.abbreviated))" : "-\(getDeletedComma(value: tile.amount.abbreviated))"))
+            Text(String(tile.type == .income ? "\(removeCommasAndDots(from: tile.amount.abbreviated))" : "-\(removeCommasAndDots(from: tile.amount.abbreviated))"))
                 .font(.headline)
                 .foregroundColor(tile.type == .income ? Color.green : Color.red)
                 .padding(.trailing, 35)
         }
     }
-}
-
-#Preview {
-    ListTileView(tile: ListTileModel(amount: 0.0, comment: "", category: "", image: "", type: .income))
 }

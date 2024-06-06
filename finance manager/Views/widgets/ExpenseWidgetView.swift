@@ -12,7 +12,7 @@ struct ExpenseWidgetView: View {
     @State private var amount: String = ""
     @State private var comment: String = ""
     @State private var selectedIcon: IconType = .home
-    @State private var selectedDate: String = formattedDateOnly(from: Date.now, dateType: .yearMonthDay, dayType: .today)
+    @State private var selectedDate: String = formattedDate(from: Date.now, dateType: .yearMonthDay, dayType: .today)
     
     var body: some View {
         VStack {
@@ -40,6 +40,8 @@ struct ExpenseWidgetView: View {
             
             DateWidgetView(selectedDate: $selectedDate)
             
+            Spacer()
+            ProgressBarView()
             Spacer()
             
             HStack {

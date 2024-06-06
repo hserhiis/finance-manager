@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct TopBarTabsView: View {
-    @Binding var selectedTab: TabType
     @EnvironmentObject var state: GlobalState
     
     func getTabBarAmount(for tab: TabType) -> Double {
@@ -26,9 +25,9 @@ struct TopBarTabsView: View {
         VStack {
             HStack(spacing: 10) {
                 ForEach([TabType.income, TabType.expenses], id: \.self) { tab in
-                    TopBarTabView(tab: tab, isSelected: tab == selectedTab, amount: getTabBarAmount(for: tab))
+                    TopBarTabView(tab: tab, isSelected: tab == state.selectedTab, amount: getTabBarAmount(for: tab))
                         .onTapGesture {
-                            selectedTab = tab
+                            state.selectedTab = tab
                         }
                 }
             }

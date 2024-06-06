@@ -26,7 +26,7 @@ struct TopBarTabView: View {
                 .padding(.top, 18)
                 .padding(.bottom, 8)
             
-            Text("\(getDeletedComma(value: amount.abbreviated)) \(state.selectedCurrency)")
+            Text("\(removeCommasAndDots(from: amount.abbreviated)) \(state.selectedCurrency)")
                 .foregroundColor(tab.color)
                 .padding(.bottom, 18)
         }

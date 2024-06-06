@@ -29,7 +29,7 @@ struct DateWidgetView: View {
             .background(id == 0 ? Color.datePick : nil)
             .onTapGesture {
                 id = 0
-                selectedDate = formattedDateOnly(from: Date.now, dateType: .yearMonthDay, dayType: .today)
+                selectedDate = formattedDate(from: Date.now, dateType: .yearMonthDay, dayType: .today)
             }
             VStack {
                 Text(yesterdayDate)
@@ -44,14 +44,14 @@ struct DateWidgetView: View {
             .background(id == 1 ? Color.datePick : nil)
             .onTapGesture {
                 id = 1
-                selectedDate = formattedDateOnly(from: Date.now, dateType: .yearMonthDay, dayType: .yesterday)
+                selectedDate = formattedDate(from: Date.now, dateType: .yearMonthDay, dayType: .yesterday)
             }
             DatePicker("Select a day", selection: $pickedDate, in: ...Date(), displayedComponents: .date)
                 .datePickerStyle(.automatic)
                 .labelsHidden()
                 .frame(maxHeight: 20)
                 .onChange(of: pickedDate) {
-                    selectedDate = formattedDateOnly(from: pickedDate, dateType: .yearMonthDay, dayType: nil)
+                    selectedDate = formattedDate(from: pickedDate, dateType: .yearMonthDay, dayType: nil)
                     id = 3
                 }
             // instead of date picker i want icon calendar to be shown

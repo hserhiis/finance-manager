@@ -10,7 +10,7 @@ import SwiftUI
 struct BalanceWidgetView: View {
     @EnvironmentObject var state: GlobalState
     var body: some View {
-        Text("\(getDeletedComma(value: state.getBalanceTotal().abbreviated)) \(state.selectedCurrency)")
+        Text("\(removeCommasAndDots(from: state.getBalanceTotal().abbreviated)) \(state.selectedCurrency)")
             .foregroundStyle(Color.blue)
     }
 }

@@ -36,11 +36,11 @@ struct MainAppView: View {
                                         Label(ScreenType.list.rawValue, systemImage: ScreenType.list.iconName)
                                     }
                                     .tag(ScreenType.list.id)
-                                GoalScreenView()
+                                NotesScreenView()
                                     .tabItem {
-                                        Label(ScreenType.goal.rawValue, systemImage: ScreenType.goal.iconName)
+                                        Label(ScreenType.notes.rawValue, systemImage: ScreenType.notes.iconName)
                                     }
-                                    .tag(ScreenType.goal.id)
+                                    .tag(ScreenType.notes.id)
                             }
                         }
                     // Transparent overlay to capture taps outside the drawer

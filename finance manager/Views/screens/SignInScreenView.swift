@@ -52,8 +52,8 @@ struct SignInScreenView: View {
                     Spacer()
                     PrimaryButton(text: "Sign in")
                         .onTapGesture {
-                            isValidEmail = getIsValidEmail(value: email)
-                            isValidPassword = getIsValidPassword(value: password)
+                            isValidEmail = getIsValidEmail(email)
+                            isValidPassword = getIsValidPassword(password)
                             if isValidEmail && isValidPassword {
                                 Auth.auth().signIn(withEmail: email, password: password) { authResult, error in
                                     if let err = error {
@@ -72,10 +72,6 @@ struct SignInScreenView: View {
                             }
                         }
                     Spacer()
-                    Text("---- OR ----")
-                    Spacer()
-                    SocialButton(icon: .google, text: "Sign in with google")
-                    SocialButton(icon: .apple, text: "Sign in with apple")
                     
                     
                     HStack {
@@ -94,6 +90,7 @@ struct SignInScreenView: View {
             .padding(.top, 180)
             .padding(.bottom, 80)
         }
+        
     }
 }
 

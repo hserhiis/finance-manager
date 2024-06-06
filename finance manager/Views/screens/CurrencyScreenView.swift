@@ -60,6 +60,7 @@ struct CurrencyScreenView: View {
                 .padding(.top, height)
             }
         }
+        
     }
 }
 

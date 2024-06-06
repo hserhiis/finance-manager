@@ -33,6 +33,7 @@ struct AmountScreenView: View {
                 .padding(.top, height)
             }
         }
+        
     }
 }
 

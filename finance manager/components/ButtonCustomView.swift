@@ -18,7 +18,6 @@ struct ButtonCustomView: View {
     
     var body: some View {
         Button("Add") {
-            print(selectedDate)
             if let amountValue = Double(amount) {
                 if type == .income {
                     state.addIncome(amountValue)

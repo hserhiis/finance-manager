@@ -27,8 +27,8 @@ struct DrawerWidgetView: View {
                 globalState.isDrawerOpen = false
             })
             
-            NavigationButton(title: "Goal", action: {
-                globalState.currentScreen = ScreenType.goal.id
+            NavigationButton(title: "Notes", action: {
+                globalState.currentScreen = ScreenType.notes.id
                 globalState.isDrawerOpen = false
             })
             
@@ -78,19 +78,5 @@ struct DrawerWidgetView: View {
         } catch let signOutError as NSError {
             print("Error signing out: %@", signOutError)
         }
-    }
-}
-
-struct NavigationButton: View {
-    let title: String
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            Text(title)
-                .padding()
-                .frame(maxWidth: .infinity, alignment: .leading)
-        }
-        .buttonStyle(PlainButtonStyle())
     }
 }
